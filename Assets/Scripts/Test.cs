@@ -25,6 +25,11 @@ namespace DefaultNamespace
             _graphy = !_graphy;
         }
 
+        public void SetFPSMinus1()
+        {
+            Application.targetFrameRate = -1;
+        }
+        
         public void SetFPS30()
         {
             Application.targetFrameRate = 30;
