@@ -17,12 +17,25 @@ namespace Editor.Player.Build
         {
             if (report.summary.platform == BuildTarget.iOS) // Check if the build is for iOS 
             {
-                // Rewrite "UnityAppController+Rendering.mm" to fix default fps to 60
+                // Rewrite "UnityAppController+Rendering.mm" to fix default fps to max
                 var filePath = $"{report.summary.outputPath}/Classes/UnityAppController+Rendering.mm";
                 var file = File.ReadAllText(filePath);
+                
                 var replace = @"targetFPS = UnityGetTargetFPS();";
-                var with = @"targetFPS = 60;";
-                File.WriteAllText(filePath, file.Replace(replace, with));
+                var with = @"targetFPS = maxFPS;";
+                file = file.Replace(replace, with);
+                
+                File.WriteAllText(filePath, file);
+                
+                // Rewrite "MetalHelper.mm" to fix default fps to 60
+                filePath = $"{report.summary.outputPath}/Classes/Unity/MetalHelper.mm";
+                file = File.ReadAllText(filePath);
+                
+                replace = @"#if (PLATFORM_IOS || PLATFORM_TVOS) && !(TARGET_IPHONE_SIMULATOR || TARGET_TVOS_SIMULATOR)";
+                with = @"#if NEVER_EVER";
+                file = file.Replace(replace, with);
+                
+                File.WriteAllText(filePath, file);
             }
         }
     }
